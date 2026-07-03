@@ -19,7 +19,7 @@ export function ItemCard(props: ItemCardProps) {
             {props.isInventory ?
                 <div>
                     <button>Equip</button> <button onClick={props.onSell}>Sell</button>
-                </div>:<button onClick={props.onBuy}>Buy by: {props.price}</button>
+                </div>:<button onClick={props.onBuy}>Add to cart by: {props.price}</button>
             }
         </div>
     )
