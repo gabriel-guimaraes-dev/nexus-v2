@@ -25,6 +25,32 @@ export function Cart({ cartItems, setCartItems, playerGold, setPlayerGold, inven
 
     const [discount, setDiscount] = useState<number>(1)
 
+    function handleAddQuantity(indexToAdd: number) {
+        const updatedCartItems = cartItems.map((item, index) => {
+            if (index === indexToAdd) {
+                return { ...item, quantity: item.quantity + 1 };
+            }
+            return item;
+        });
+        setCartItems(updatedCartItems)
+        showNotification(`Increased quantity of ${cartItems[indexToAdd].name} in cart!`, 'success')
+    }
+
+    function handleSubtractQuantity(indexToSubtract: number) {
+        const updatedCartItems = cartItems.map((item, index) => {
+            if (index === indexToSubtract) {
+                if (item.quantity > 1) {
+                    showNotification(`Decreased quantity of ${item.name} in cart!`, 'success')
+                    return { ...item, quantity: item.quantity - 1 };
+                }
+                showNotification(`Cannot decrease quantity of ${item.name} below 1!`, 'error')
+                return item; // Return the item unchanged if quantity is 1
+            }
+            return item;
+        });
+        setCartItems(updatedCartItems);
+    }
+
     function handleRemoveFromCart(indexToRemove: number) {
     setCartItems(cartItems.filter((_, index) => index !== indexToRemove))
     showNotification('Item removed from cart!')
@@ -36,7 +62,7 @@ export function Cart({ cartItems, setCartItems, playerGold, setPlayerGold, inven
             {cartItems.length === 0 ? <p>Your cart is empty.</p> : (
                     <ul>
                     {cartItems.map((item, index) => (
-                        <li key={index}>{item.name} - {item.price} gold <button onClick={() => handleRemoveFromCart(index)}>❌</button></li>
+                        <li key={index}>{item.name} - {item.price} gold - x{item.quantity} - <button onClick={() => handleAddQuantity(index)}>+</button> <button onClick={() => handleSubtractQuantity(index)}>-</button> <button onClick={() => handleRemoveFromCart(index)}>❌</button></li>
                     ))}
                     <label>Discount:</label>
                     <input style={{ textTransform: 'uppercase' }}type="text" placeholder="Enter discount code" onChange={(e) => {
@@ -56,11 +82,15 @@ export function Cart({ cartItems, setCartItems, playerGold, setPlayerGold, inven
                         }
                     }}></input>
 
-                    <p>Total: {cartItems.reduce((total, item) => total + (item.price * discount), 0)} gold</p>
+                    <p>Total: {cartItems.reduce((total, item) => total + ((item.price * item.quantity) * discount), 0)} gold</p>
                     </ul>
                 )}
                 <button onClick={() => {
-                    const totalCost = cartItems.reduce((total, item) => total + (item.price * discount), 0);
+                    const totalCost = cartItems.reduce((total, item) => total + (item.price * item.quantity * discount), 0);
+                    if (cartItems.length === 0) {
+                        showNotification('Your cart is empty!', 'error');
+                        return;
+                    }
                     if (playerGold >= totalCost) {
                     setPlayerGold(playerGold - totalCost);
                     setInventoryItems([...inventoryItems, ...cartItems.map(item => ({ ...item, isInventory: true }))]);
@@ -72,6 +102,10 @@ export function Cart({ cartItems, setCartItems, playerGold, setPlayerGold, inven
                 }}>Buy All Items in Cart</button>
 
                 <button onClick={() => {
+                    if (cartItems.length === 0) {
+                        showNotification('Your cart is already empty!', 'error');
+                        return;
+                    }
                     setCartItems([]);
                     showNotification('Cart cleared!', 'success');
                 }}>Clear Cart</button>

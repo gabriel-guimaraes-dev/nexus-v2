@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import './App.css'
+import { useState } from 'react'
 import { Navbar } from './components/Navbar'
 import { ItemCard } from './components/ItemCard'
 import { Filters } from './components/Filters'
@@ -10,7 +10,7 @@ import { Toast } from './components/Toast'
 
 function App() {
   const [playerGold, setPlayerGold] = useState(5000)
-  const [itemcards, setItemCards] = useState<GameItem[]>([
+  const [itemcards] = useState<GameItem[]>([
     { name: 'Poção de Vida', price: 100, icon: '❤️', isInventory: false, type: 'potion', power: 10, quantity:1 },
     { name: 'Espada', price: 250, icon: '🗡️', isInventory: false, type: 'weapon', power: 20, quantity: 1},
     { name: 'Veneno', price: 600, icon: '☠️', isInventory: false, type: 'poison', power: 50, quantity: 1 }
@@ -23,6 +23,7 @@ function App() {
   const [activeFilter, setActiveFilter] = useState<string>('All')
   const filteredStore = activeFilter === 'All' ? itemcards : itemcards.filter(item => item.type === activeFilter)
   const filteredInventory = activeFilter === 'All' ? inventoryItems : inventoryItems.filter(item => item.type === activeFilter)
+  
 
   function handleSellItem(item: GameItem, indexClicked: number){
     setPlayerGold(playerGold + (item.price * 0.6)) // Selling gives back 60% of the original price
@@ -31,8 +32,21 @@ function App() {
   }
 
   function addCart(item: GameItem){
-    setCartItems([...cartItems, item])
-    showNotification(`${item.name} added to cart!`)
+    const alreadyExistsInCart = (item: GameItem) => cartItems.some(cartItem => cartItem.name === item.name);
+    if(alreadyExistsInCart(item)){
+      const updatedCartItems = cartItems.map(cartItem => {
+        if(cartItem.name === item.name) {
+          return { ...cartItem, quantity: cartItem.quantity + 1 };
+        }
+        return cartItem;
+      });
+      setCartItems(updatedCartItems);
+      showNotification(`Increased quantity of ${item.name} in cart!`, 'success')
+    } else {
+      setCartItems([ ...cartItems, item ]);
+      showNotification(`${item.name} added to cart!`, 'success')
+    }
+    
   }
 
   function showNotification(message: string, type: 'success' | 'error' = 'success') {
@@ -51,11 +65,9 @@ function App() {
 
         <Toast message={notification} type={toastType} />
 
-        <h1>Nexus V2</h1>
-
         <Filters onFilterChange={setActiveFilter} />
 
-        <button onClick={() => setItemCards([...itemcards, { name: 'Escudo', price: 300, icon:'🛡️', isInventory: false, type: 'shield', power: 45, quantity: 1 }])}>Adicionar Escudo</button>
+        <h1>Store</h1>
 
         <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
           {filteredStore.map((item, index) => (
