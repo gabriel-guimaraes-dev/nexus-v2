@@ -1,11 +1,12 @@
 import './App.css'
 import { useState } from 'react'
 import { Navbar } from './components/Navbar'
-import { ItemCard } from './components/ItemCard'
 import { Filters } from './components/Filters'
 import { Cart } from './components/Cart'
 import type { GameItem } from './components/Cart'
 import { Toast } from './components/Toast'
+import { Store } from './components/Store'  
+import { Inventory } from './components/Inventory'
 
 
 function App() {
@@ -16,7 +17,6 @@ function App() {
     { name: 'Veneno', price: 600, icon: '☠️', isInventory: false, type: 'poison', power: 50, quantity: 1 }
   ])
   const [cartItems, setCartItems] = useState<GameItem[]>([])
-  
   const [inventoryItems, setInventoryItems] = useState<GameItem[]>([])
   const [notification, setNotification] = useState<string>('')
   const [toastType, setToastType] = useState<'success' | 'error'>('success')
@@ -67,21 +67,10 @@ function App() {
 
         <Filters onFilterChange={setActiveFilter} />
 
-        <h1>Store</h1>
+        <Store filteredStore={filteredStore} addCart={addCart} />
 
-        <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
-          {filteredStore.map((item, index) => (
-            <ItemCard key={index} name={item.name} price={item.price} icon={item.icon} isInventory={item.isInventory} type={item.type} power={item.power} quantity={item.quantity} onBuy={() => addCart(item)} onSell={() => handleSellItem(item, index)}/>
-          ))}
-        </div>
+        <Inventory filteredInventory={filteredInventory} handleSellItem={handleSellItem} />
 
-        <h1>Inventory</h1>
-
-        <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
-          {filteredInventory.map((item, index) => (
-            <ItemCard key={index} name={item.name} price={item.price} icon={item.icon} isInventory={item.isInventory} type={item.type} power={item.power} quantity={item.quantity} onBuy={() => addCart(item)} onSell={() => handleSellItem(item, index)}/>
-          ))}
-        </div>
       </div>
       <div>
         <Cart cartItems={cartItems} setCartItems={setCartItems} playerGold={playerGold} setPlayerGold={setPlayerGold} inventoryItems={inventoryItems} setInventoryItems={setInventoryItems} showNotification={showNotification}/>
