@@ -6,7 +6,8 @@ type InventoryProps ={
     handleSellItem: (item: GameItem, indexClicked: number) => void;
 }
 
-export function Inventory(inventoryProps: InventoryProps) {
+export function Inventory({filteredInventory, handleSellItem}: InventoryProps) {
+    
 
 
     return (
@@ -14,8 +15,17 @@ export function Inventory(inventoryProps: InventoryProps) {
             <h1>Inventory</h1>
             
             <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
-                {inventoryProps.filteredInventory.map((item, index) => (
-                <ItemCard key={index} name={item.name} price={item.price} icon={item.icon} isInventory={item.isInventory} type={item.type} power={item.power} quantity={item.quantity} onBuy={() => {}} onSell={() => inventoryProps.handleSellItem(item, index)}/>
+                {filteredInventory.map((item, index) => (
+                <ItemCard key={index} 
+                name={item.name} 
+                price={item.price} 
+                icon={item.icon} 
+                isInventory={item.isInventory} 
+                type={item.type} 
+                power={item.power}
+                quantity={item.quantity} 
+                onBuy={() => {}} 
+                onSell={() => handleSellItem(item, index)}/>
                 ))}
             </div>
         </div>

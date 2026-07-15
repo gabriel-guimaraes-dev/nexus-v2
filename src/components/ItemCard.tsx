@@ -10,16 +10,19 @@ type ItemCardProps = {
     quantity: number;
 }
 
-export function ItemCard(props: ItemCardProps) {
+export function ItemCard({name, price, icon, isInventory, power, quantity, onBuy, onSell}: ItemCardProps) {
     return (
         <div style={{ border: '1px solid #ccc', padding: '10px', margin: '10px', width: '150px', textAlign: 'center'}}>
-            <p>Item Icon: {props.icon}</p>
-            <p>Item Name: {props.name}</p>
-            <p>Item Power: {props.power}</p>
-            {props.isInventory ?
+            <p>Item Icon: {icon}</p>
+            <p>Item Name: {name}</p>
+            <p>Item Power: {power}</p>
+            {isInventory &&
+                <p>Item Quantity: {quantity}</p>} 
+                        
+            {isInventory ?
                 <div>
-                    <button>Equip</button> <button onClick={props.onSell}>Sell</button>
-                </div>:<button onClick={props.onBuy}>Add to cart by: {props.price}</button>
+                    <button>Equip</button> <button onClick={onSell}>Sell</button>
+                </div>:<button onClick={onBuy}>Add to cart by: {price}</button>
             }
         </div>
     )

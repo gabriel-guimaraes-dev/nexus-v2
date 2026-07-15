@@ -54,7 +54,7 @@ export function Cart({ cartItems, setCartItems, playerGold, setPlayerGold, inven
     function handleRemoveFromCart(indexToRemove: number) {
     setCartItems(cartItems.filter((_, index) => index !== indexToRemove))
     showNotification('Item removed from cart!')
-  }
+    }
 
     return(
         <div>
@@ -92,12 +92,21 @@ export function Cart({ cartItems, setCartItems, playerGold, setPlayerGold, inven
                         return;
                     }
                     if (playerGold >= totalCost) {
-                    setPlayerGold(playerGold - totalCost);
-                    setInventoryItems([...inventoryItems, ...cartItems.map(item => ({ ...item, isInventory: true }))]);
-                    setCartItems([]);
-                    showNotification(`You bought ${cartItems.length} items for ${totalCost} gold! With success!`, 'success');
+                        let updatedInventoryItems = [...inventoryItems];
+                        cartItems.forEach(item => {
+                            const indexOfItem = updatedInventoryItems.findIndex(inventoryItem => inventoryItem.name === item.name);
+                            if (indexOfItem !== -1) {
+                                updatedInventoryItems[indexOfItem] ={ ...updatedInventoryItems[indexOfItem], quantity: updatedInventoryItems[indexOfItem].quantity + item.quantity };
+                            } else {
+                                updatedInventoryItems.push({ ...item, isInventory: true });
+                            }
+                        });
+                        setPlayerGold(playerGold - totalCost);
+                        setInventoryItems(updatedInventoryItems);
+                        setCartItems([]);
+                        showNotification(`You bought ${cartItems.length} items for ${totalCost} gold! With success!`, 'success');
                     }else {
-                    showNotification('Not enough gold to buy all items in the cart!', 'error');
+                        showNotification('Not enough gold to buy all items in the cart!', 'error');
                     }
                 }}>Buy All Items in Cart</button>
 

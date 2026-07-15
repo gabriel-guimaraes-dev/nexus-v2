@@ -26,9 +26,20 @@ function App() {
   
 
   function handleSellItem(item: GameItem, indexClicked: number){
-    setPlayerGold(playerGold + (item.price * 0.6)) // Selling gives back 60% of the original price
-    setInventoryItems(inventoryItems.filter((_, index) => index !== indexClicked))
-    showNotification(`You sold ${item.name} for ${Math.round(item.price * 0.6)} gold! With success!`)
+    if(item.quantity > 1){
+      setInventoryItems(inventoryItems.map((inventoryItem, index) => {
+        if(index === indexClicked) {
+          return { ...inventoryItem, quantity: inventoryItem.quantity - 1 };
+        }
+        return inventoryItem;
+      }));
+      setPlayerGold(playerGold + (item.price * 0.6)) // Selling gives back 60% of the original price
+      showNotification(`You sold ${item.name} for ${Math.round(item.price * 0.6)} gold! With success!`)
+    } else {
+      setPlayerGold(playerGold + (item.price * 0.6)) // Selling gives back 60% of the original price
+      setInventoryItems(inventoryItems.filter((_, index) => index !== indexClicked))
+      showNotification(`You sold ${item.name} for ${Math.round(item.price * 0.6)} gold! With success!`)
+    }
   }
 
   function addCart(item: GameItem){
