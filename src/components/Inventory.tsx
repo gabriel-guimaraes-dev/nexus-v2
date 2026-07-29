@@ -4,6 +4,7 @@ import type { GameItem } from './Cart'
 type InventoryProps ={
     filteredInventory: GameItem[];
     handleSellItem: (item: GameItem, indexClicked: number) => void;
+    handleEquipItem: (item: GameItem, indexClicked: number) => void;
 }
 
 export function Inventory({filteredInventory, handleSellItem}: InventoryProps) {

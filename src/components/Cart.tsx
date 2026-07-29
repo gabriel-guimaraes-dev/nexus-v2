@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 export type GameItem ={
     name: string;
@@ -92,7 +92,7 @@ export function Cart({ cartItems, setCartItems, playerGold, setPlayerGold, inven
                         return;
                     }
                     if (playerGold >= totalCost) {
-                        let updatedInventoryItems = [...inventoryItems];
+                        const updatedInventoryItems = [...inventoryItems];
                         cartItems.forEach(item => {
                             const indexOfItem = updatedInventoryItems.findIndex(inventoryItem => inventoryItem.name === item.name);
                             if (indexOfItem !== -1) {
